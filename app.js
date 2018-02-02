@@ -1,15 +1,7 @@
-// ==UserScript==
-// @name         OasisDiscussions
-// @namespace    http://wikia.com/Help:Discussions
-// @version      0.9a
-// @description  Introduces the Oasis skin's design elements to FANDOM Discussions.
-// @author       http://dev.wikia.com/wiki/Speedit
-// @run-at       document-body
-// @license      CC BY-SA 3.0;  http://creativecommons.org/licenses/by-sa/3.0/
-// @match        *.wikia.com/d/*
-// @grant        none
-// ==/UserScript==
-(function(e, m, $) {
+// OasisDiscussions script
+// Introduces the Oasis skin's design elements and userscripting capabilities to FANDOM Discussions.
+// NOTE: DON'T import this from Github. The script is under testing.
+(function($) {
     // Script variables
     var oasis = {
             // Script styling
@@ -246,4 +238,4 @@
         .on('load', oasisDiscussions.boot)
         .appendTo(discussions.head);
 
-}(M, Mercury, jQuery));
+}(jQuery));
