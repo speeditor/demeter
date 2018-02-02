@@ -1,0 +1,41 @@
+/* OasisDiscussions styling */
+/* Discussions boot event */
+.ember-container .wds-spinner__screen-initializing {
+    animation: discussions__boot 1ms 1 ease, rotator .5s linear infinite;
+}
+@keyframes discussions__boot {
+    from { outline-color: currentColor; }
+    to { outline-color: transparent; }
+}
+/* Discussions initialization event */
+.discussions {
+    animation: discussions__init 1ms 1 ease;
+}
+@keyframes discussions__init {
+    from { outline-color: currentColor; }
+    to { outline-color: transparent; }
+}
+/* Discussions navigation event */
+.discussions .discussion-content-wrapper {
+    animation: discussions__navi 1ms 1 ease;
+}
+@keyframes discussions__navi {
+    from { outline-color: currentColor; }
+    to { outline-color: transparent; }
+}
+/* Discussions mobile responsive breakpoint */
+.discussions .site-head-container {
+    animation: discussions__mobi 1ms 1 ease;
+}
+@keyframes discussions__mobi {
+    from { outline-color: currentColor; }
+    to { outline-color: transparent; }
+}
+/* Discussions desktop responsive breakpoint */
+.discussions .wds-global-navigation-wrapper {
+    animation: discussions__wide 1ms 1 ease;
+}
+@keyframes discussions__wide {
+    from { outline-color: currentColor; }
+    to { outline-color: transparent; }
+}
