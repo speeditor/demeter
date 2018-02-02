@@ -3,7 +3,7 @@
 // NOTE: DON'T import this from Github. The script is under testing.
 (function($) {
     // Script variables
-    var oasis = {
+    var e, m, oasis = {
             // Script styling
             $discussionsStyles: $('<link>', {
                 'rel': 'stylesheet',
@@ -102,9 +102,6 @@
         isInitialized: false,
         // Preboot function
         boot: function() {
-            // Script libraries
-            e = M;
-            m = Mercury;
             discussions.$application.on('discussions.boot', oasisDiscussions.init);
             if ($('.wds-spinner__screen-initializing').length > 0) {
                 discussions.$application.trigger('discussions.boot');
@@ -112,6 +109,9 @@
         },
         // Script initialiser
         init: function() {
+            // Script libraries
+            e = M;
+            m = Mercury;
             // Global status variable
             window.oasisDiscussionsInitialized = oasisDiscussions.isInitialized;
             // Event dispatcher
