@@ -1,0 +1,18 @@
+{
+    "extends": "eslint:recommended",
+	"env": {
+		"browser": true,
+		"jquery": true,
+        "amd": true
+	},
+	"globals": {
+        "embertest": false,
+		"require": false,
+		"define": false,
+		"mediaWiki": false,
+		"mw": false,
+		"jquery": false,
+        "greasemonkey": false
+	},
+	"rules": {}
+}
