@@ -1,230 +1,344 @@
 // ==UserScript==
 // @name         OasisDiscussions
 // @namespace    http://wikia.com/Help:Discussions
-// @version      0.6a
+// @version      0.7a
 // @description  Introduces the Oasis skin's design elements and userscripting capabilities to FANDOM Discussions.
 // @author       http://dev.wikia.com/wiki/User:Speedit
-// @run-at       document-idle
-// @license      CC BY-SA 3.0;  http://creativecommons.org/licenses/by-sa/3.0/
-// @require      http://code.jquery.com/jquery-3.2.1.min.js
+// @run-at       document-end
+// @license      CC BY-SA 3.0; http://creativecommons.org/licenses/by-sa/3.0/
 // @match        *.wikia.com/d/*
-// @grant        none
 // ==/UserScript==
-(function($) {
-
-    var oasis = {
-            // Script styling
-            $discussionsStyles: $('<link>', {
+/**
+ *  Application scripting
+ */
+document.body.addEventListener('animationstart', function(e) {
+    // Scope restriction
+    if (e.animationName !== 'discussions__init') {
+        return;
+    }
+    /**
+     * Main OasisDiscussions script class.
+     * @class od
+     */
+    var od = {};
+    /**
+     * Discussions events module.
+     * @class od.events
+     */
+    od.events = {
+        /**
+         * @member {string} t
+         */
+        t: 'animationstart',
+        /**
+         * @function handler
+         * @param {Object} e jQuery event
+         */
+        handler: function(e) {
+            var a = e.originalEvent.animationName.split('__');
+            if (
+                a[0] !== 'discussions' ||
+                !window.oasisDiscussionsInitialized
+            ) {
+                return;
+            }
+            od.hook('discussions.' + a[1]).fire({ 'init': true });
+        }
+    };
+    /**
+     * Script hook module.
+     * @member {Object} od.hook
+     */
+    od.hook = (function() {
+        var lists = {};
+        return function(name) {
+            var list = lists[name] || (lists[name] = $.Callbacks('memory'));
+            return {
+                /** 
+                 * @method od.hook.add
+                 * @memberOf od.hook
+                 */
+                add: list.add,
+                /** 
+                 * @method od.hook.remove
+                 * @memberOf od.hook
+                 */
+                remove: list.remove,
+                /** 
+                 * @method od.hook.fire
+                 * @memberOf od.hook
+                 */
+                fire: function() {
+                    return list.fireWith(null, [].slice.call(arguments));
+                }
+            };
+        }
+    }());
+    /**
+     * Oasis module.
+     * @member {Object} od.oasis
+     */
+    od.oasis = {
+        /**
+         * Oasis module initialiser
+         * @method init
+         * @param d script state
+         */
+        init: function(d) {
+            // Function variables
+            var w = od.shoebox.applicationData.wikiVariables;
+            // Oasis styling
+            $('<link>', {
                 'rel': 'stylesheet',
-                'href': '/load.php?' + $.param({
-                    mode: 'articles',
-                    articles: 'u:speedit:MediaWiki:OasisDiscussions.css',
-                    only: 'styles',
-                    debug: 'true'
-                }),
+                'href': [
+                    'https://cors-anywhere.herokuapp.com',
+                    'https://slot1-images.wikia.nocookie.net/__am',
+                    w.cacheBuster,
+                    'sasses',
+                    encodeURIComponent($.param(w.theme)),
+                    'skins/oasis/css/core/breakpoints-background.scss'
+                ].join('/'),
                 'crossorigin': 'anonymous'
-            }),
-            // Class list
-            classList: ['skin-oasis'],
-            // Class map
-            classMap: {
-                'background-fix': {
-                    reverse: false,
-                    className: 'background-fixed'
-                },
-                'background-split': {
-                    reverse: true,
-                    className: 'background-not-split'
-                },
-                'background-tile': {
-                    reverse: true,
-                    className: 'background-not-tiled'
-                }
-            },
-            themeSettings: {}
+            }).appendTo(document.body);
+            // Styling generator
+            $('<style>', {
+                'id': 'oasisDiscussionsStyles',
+                'text': (function(t) {
+                    return ':root { ' + Object.keys(t).map(function(p) {
+                        return '--' + p + ': ' + t[p] + ';';
+                    }).join(' ') + ' }'
+                }(w.theme))
+            }).appendTo(document.body);
+            // Data fetching
+            od.oasis.data(d);
         },
-        // Discussions variables
-        discussions = {
-            // Discussions events
-            events: {
-                t: 'animationstart',
-                handlers: {
-                    navi: {
-                        fn: function(e) {
-                            // Event handling
-                            if (e.originalEvent.animationName !== 'discussions__navi' || !window.oasisDiscussionsInitialized) { return; }
-                            // Event dispatcher
-                            $(document.body).trigger('discussions.navi');
-                        }
-                    },
-                    mobi: {
-                        fn: function(e) {
-                            // Event handling
-                            if (e.originalEvent.animationName !== 'discussions__mobi' || !window.oasisDiscussionsInitialized) { return; }
-                            // Event dispatcher
-                            $(document.body).trigger('discussions.mobi');
-                        }
-                    },
-                    wide: {
-                        fn: function(e) {
-                            // Event handling
-                            if (e.originalEvent.animationName !== 'discussions__wide' || !window.oasisDiscussionsInitialized) { return; }
-                            // Event dispatcher
-                            $(document.body).trigger('discussions.wide');
-                        }
-                    }
-                }
+        /**
+         * Oasis data handler
+         * @method data
+         * @param d script state
+         */
+        data: function(d) {
+            // Wiki data
+            var t = new Date().getTime();
+            var cb = Number(localStorage.oasisDiscussionsAge) || +t-21600000;
+            var s = (typeof localStorage.oasisDiscussionsSettings === 'undefined');
+            // Theme setup
+            if (s || (t >= +cb+21600000)) {
+                $.get('/wiki/Special:BlankPage').done(function (w) {
+                    od.oasis.call(w, d);
+                });
+            } else {
+                od.oasis.themeSettings = JSON.parse(localStorage.oasisDiscussionsSettings);
+                od.oasis.theme(d);
             }
         },
-        CORSDomain = 'https://cors-anywhere.herokuapp.com';
-
-    // Script functions
-    var oasisDiscussions = {
-            // Script initialiser
-            init: function() {
-                // Fastboot shoebox caching
-                discussions.shoebox = {};
-                $('script[type="fastboot/shoebox"]').each(function() {
-                    var sid = this.id.match(/shoebox-([\s\S]+)$/)[1];
-                    discussions.shoebox[sid] = JSON.parse(this.textContent);
+        /**
+         * Oasis theme configuration
+         * @method theme
+         * @param d script state
+         */
+        call: function(wikiPage, d) {
+            // Body class retrieval
+            var wikiClasses = wikiPage
+                .match(/<body class="([^"]*)"/)[1]
+                .split(' ').filter(function(u) {
+                    return (u.length > 0);
                 });
-                // Function variables
-                var s = ':root {',
-                    // SASS URL generation
-                    oasisSassUrl = [
-                        CORSDomain,
-                        'https://slot1-images.wikia.nocookie.net/__am',
-                        discussions.shoebox.applicationData.wikiVariables.cacheBuster,
-                        'sasses',
-                        encodeURIComponent($.param(discussions.shoebox.applicationData.wikiVariables.theme)),
-                        'skins/oasis/css/core/breakpoints-background.scss'
-                    ].join('/');
-                // Oasis styling
-                $('<link>', {
-                    'rel': 'stylesheet',
-                    'href': oasisSassUrl,
-                    'crossorigin': 'anonymous'
-                }).appendTo(document.body);
-                // Styling generator
-                $.each(discussions.shoebox.applicationData.wikiVariables.theme, function(p, c) {
-                    s += ' --' + p + ': ' + c + ';';
-                });
-                s += ' }';
-                $('<style>', {
-                    'id': 'oasisDiscussionsStyles',
-                    'text': s
-                }).appendTo(document.body);
-                // Initial hook
-                $(document.body).trigger('discussions.init');
-                // Global status variable
-                window.oasisDiscussionsInitialized = true;
-                // Event dispatcher
-                $.each(discussions.events.handlers, function(e, o) {
-                    $(document.body).on(discussions.events.t, o.fn);
-                });
-                // Data fetching
-                oasisDiscussions.data({'isInitialized': false});
-            },
-            // Data handler
-            data: function(d) {
-                // Wiki data
-                var t = new Date().getTime(),
-                    cb = Number(localStorage.oasisDiscussionsAge) || +t-21600000,
-                    s = (typeof localStorage.oasisDiscussionsSettings === 'undefined');
+            // Assign design settings
+            $.each(od.oasis.classMap, function(s, p) {
+                var c = (wikiClasses.indexOf(p.className) > -1);
+                od.oasis.themeSettings[s] = p.reverse ? !c : c;
+            });
+            // Data caching
+            localStorage.oasisDiscussionsSettings = JSON.stringify(od.oasis.themeSettings);
+            localStorage.oasisDiscussionsAge = new Date().getTime();
+            // Theming utility
+            od.oasis.theme(d);
+        },
+        /**
+         * Oasis theme configuration
+         * @method theme
+         * @param d script state
+         */
+        theme: function(d) {
+            if (d.init) {
+                od.oasis.classList = ['skin-oasis'];
+            }
+            // Class iterator
+            $.each(od.oasis.themeSettings, function(s, p) {
+                if (od.oasis.classMap[s].reverse === p) { return; }
+                var cls = od.oasis.classMap[s].className;
+                od.oasis.classList.push(cls);
+            });
+            // Script rendering
+            if (!d.init) {
+                od.oasis.render();
+            }
+            od.oasis.util.addClass(d);
+        },
+        /**
+         * Oasis renderer
+         * @method render
+         */
+        render: function() {
+            // Script activation
+            od.hook('discussions.init').add(od.oasis.handler.on);
+            // Event delegation
+            od.hook('discussions.navi').add(od.oasis.handler.on);
+            od.hook('discussions.mobi').add(od.oasis.handler.off);
+            od.hook('discussions.wide').add(od.oasis.handler.on);
+            od.hook('discussions.init').add(od.oasis.handler.on);
+        },
+        /**
+         * Oasis event handlers
+         * @member {Object} handler
+         */
+        handler: {
+            /**
+             * Oasis styling activator
+             * @method on
+             */
+            on: function() {
+                var t = new Date().getTime();
+                var cb = Number(localStorage.oasisDiscussionsAge) || +t-21600000;
+                var s = (typeof localStorage.oasisDiscussionsSettings === 'undefined');
+                // Remove existing classes
+                od.oasis.util.rmvClass();
                 // Theme setup
                 if (s || (t >= +cb+21600000)) {
-                    $.get('/wiki/Special:BlankPage').done(function (w) {
-                        oasisDiscussions.call(w, d);
-                    });
+                    od.oasis.data({ 'init': true });
                 } else {
-                    oasis.themeSettings = JSON.parse(localStorage.oasisDiscussionsSettings);
-                    oasisDiscussions.theme(d);
+                    od.oasis.util.addClass();
                 }
             },
-            // Data call
-            call: function(wikiPage, d) {
-                // Body class retrieval
-                var wikiClasses = wikiPage
-                    .match(/<body class="([^"]*)"/)[1]
-                    .split(' ').filter(function(u) {
-                        return (u.length > 0);
-                    });
-                // Assign design settings
-                $.each(oasis.classMap, function(s, p) {
-                    var c = (wikiClasses.indexOf(p.className) > -1);
-                    oasis.themeSettings[s] = p.reverse ? !c : c;
-                });
-                // Data caching
-                localStorage.oasisDiscussionsSettings = JSON.stringify(oasis.themeSettings);
-                localStorage.oasisDiscussionsAge = new Date().getTime();
-                // Theming utility
-                oasisDiscussions.theme(d);
-            },
-            // Theme configuration
-            theme: function(d) {
-                if (d.isInitialized) {
-                    oasis.classList = ['skin-oasis'];
-                }
-                // Class iterator
-                $.each(oasis.themeSettings, function(s, p) {
-                    if (oasis.classMap[s].reverse === p) { return; }
-                    var cls = oasis.classMap[s].className;
-                    oasis.classList.push(cls);
-                });
-                // Script rendering
-                if (!d.isInitialized) {
-                    oasisDiscussions.render();
-                } else {
-                    oasisDiscussions.util.addClass(d);
-                }
-            },
-            // Script rendering
-            render: function() {
-                // Script activation
-                $(document.body).on('discussions.init', oasisDiscussions.handler.on);
-                // Event delegation
-                $(document.body).on('discussions.navi', oasisDiscussions.handler.on);
-                $(document.body).on('discussions.mobi', oasisDiscussions.handler.off);
-                $(document.body).on('discussions.wide', oasisDiscussions.handler.on);
-                $(document.body).on('discussions.init', oasisDiscussions.handler.on);
-            },
-            // Event handlers
-            handler: {
-                on: function() {
-                    var t = new Date().getTime(),
-                        cb = Number(localStorage.oasisDiscussionsAge) || +t-21600000,
-                        s = (typeof localStorage.oasisDiscussionsSettings === 'undefined');
-                    // Theme setup
-                    if (s || (t >= +cb+21600000)) {
-                        oasisDiscussions.data({'isInitialized': true});
-                    } else {
-                        oasisDiscussions.util.addClass({'isInitialized': true});
-                    }
-                },
-                off: function() {
-                    oasisDiscussions.util.rmvClass({'isInitialized': true});
-                }
-            },
-            // Script utilities
-            util: {
-                // Class addition
-                addClass: function() {
-                    oasis.classList.forEach(function(cls) {
-                        $(document.body).addClass(cls);
-                    });
-                },
-                // Class removal
-                rmvClass: function() {
-                    oasis.classList.forEach(function(cls) {
-                        $(document.body).removeClass(cls);
-                    });
-                }
+            /**
+             * Oasis styling deactivator
+             * @method off
+             */
+            off: function() {
+                od.oasis.util.rmvClass();
             }
-        };
-
-    // Script bootloader
-    oasis.$discussionsStyles
-        .on('load', oasisDiscussions.init)
-        .appendTo(document.body);
- 
-}(window.jQuery))
+        },
+        /**
+         * Oasis utilities
+         * @member {Object} util
+         */
+        util: {
+            /**
+             * Oasis class addition
+             * @method addClass
+             */
+            addClass: function() {
+                od.oasis.classList.forEach(function(cls) {
+                    $(document.body).addClass(cls);
+                });
+            },
+            /**
+             * Oasis class removal
+             * @method rmvClass
+             */
+            rmvClass: function() {
+                od.oasis.classList.forEach(function(cls) {
+                    $(document.body).removeClass(cls);
+                });
+            }
+        },
+        /**
+         * Class list cache
+         * @member {Array} classList
+         */
+        classList: ['skin-oasis'],
+        /**
+         * Class map
+         * @member {Object} classMap
+         */
+        classMap: {
+            'background-fix': {
+                reverse: false,
+                className: 'background-fixed'
+            },
+            'background-split': {
+                reverse: true,
+                className: 'background-not-split'
+            },
+            'background-tile': {
+                reverse: true,
+                className: 'background-not-tiled'
+            }
+        },
+        /**
+         * Settings cache
+         * @member {Object} themeSettings
+         */
+        themeSettings: {}
+    };
+    /**
+     * Module registry
+     * @member {Array} od.modules
+     */
+    od.modules = Object.keys(od).filter(function(m) {
+        return (
+            typeof od[m] === 'object' &&        // class check
+            typeof od[m].init === 'function'    // init check
+        );
+    });
+    /**
+     * Script initializer
+     * @method od.init
+     */
+    od.init = (function() {
+        // Fastboot shoebox caching
+        od.shoebox = {};
+        $('script[type="fastboot/shoebox"]').each(function() {
+            var sid = this.id.match(/shoebox-([\s\S]+)$/)[1];
+            od.shoebox[sid] = JSON.parse(this.textContent);
+        });
+        // Global status variable
+        window.oasisDiscussionsInitialized = true;
+        // Initial hook
+        $(document.body).trigger('discussions.init');
+        // Event dispatcher
+        $(document.body).on(od.events.t, od.events.handler);
+        // Module initializers
+        od.modules.forEach(function(m) {
+            od[m].init({ 'init': false });
+        });
+    }());
+});
+/**
+ * Application styling
+ * @class app
+ */
+(function(app) {
+    // Stylesheet attributes
+    Object.keys(app.m).forEach(function(a) {
+        app.s.setAttribute(a, app.m[a]);
+    });
+    // Stylesheet insertion
+    document.body.appendChild(app.s);
+})({
+    /**
+     * Stylesheet element
+     * @alias app.s
+     * @memberof! app
+     */
+    s: document.createElement('link'),
+    /**
+     * Stylesheet attributes
+     * @alias app.m
+     * @memberof! app
+     */
+    m: {
+        'rel': 'stylesheet',
+        'href': (function(o) {
+            return '/load.php?' + Object.keys(o).map(function(k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(o[k]);
+            }).join('&');
+        }({
+            mode: 'articles',
+            articles: 'u:speedit:MediaWiki:OasisDiscussions.css',
+            only: 'styles',
+            debug: '1'
+        }))
+    }
+})

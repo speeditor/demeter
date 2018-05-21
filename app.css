@@ -3,7 +3,16 @@
 .skin-oasis.discussions .discussion-wrapper {
     background: var(--color-page);
 }
-/** Discussions navigation event **/
+/** Discussions event styling **/
+/*** Discussions initialisation event ***/
+.discussions #dom_ruler-text_measurer {
+    animation: discussions__init 1ms 1 ease;
+}
+@keyframes discussions__init {
+    from { outline-color: currentColor; }
+    to   { outline-color: transparent; }
+}
+/*** Discussions navigation event ***/
 .discussions .discussion-content-wrapper {
     animation: discussions__navi 1ms 1 ease;
 }
@@ -11,7 +20,7 @@
     from { outline-color: currentColor; }
     to   { outline-color: transparent; }
 }
-/** Discussions mobile responsive breakpoint **/
+/*** Discussions mobile responsive breakpoint ***/
 .discussions .site-head-container {
     animation: discussions__mobi 1ms 1 ease;
 }
@@ -19,7 +28,7 @@
     from { outline-color: currentColor; }
     to   { outline-color: transparent; }
 }
-/** Discussions desktop responsive breakpoint **/
+/*** Discussions desktop responsive breakpoint ***/
 .discussions .wds-global-navigation-wrapper {
     animation: discussions__wide 1ms 1 ease;
 }
@@ -27,4 +36,3 @@
     from { outline-color: currentColor; }
     to   { outline-color: transparent; }
 }
-

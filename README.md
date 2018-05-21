@@ -13,3 +13,4 @@ The script creates a discussions object.
 ## TO-DO
 * UI modifications for consistency with Oasis
 * Rail activity module
+* API wrapper
