@@ -1,15 +1,18 @@
 // ==UserScript==
 // @name         OasisDiscussions
-// @namespace    http://wikia.com/Help:Discussions
-// @version      0.7a
-// @description  Introduces the Oasis skin's design elements and userscripting capabilities to FANDOM Discussions.
+// @version      0.7.1
 // @author       http://dev.wikia.com/wiki/User:Speedit
 // @run-at       document-end
-// @license      CC BY-SA 3.0; http://creativecommons.org/licenses/by-sa/3.0/
 // @match        *.wikia.com/d/*
 // ==/UserScript==
 /**
- *  Application scripting
+ * 
+ * @module              OasisDiscussions
+ * @description         Introduces the Oasis skin's design elements and userscripting capabilities to FANDOM Discussions.
+ * @author              Speedit
+ * @version             0.7.1
+ * @license             GNU GPL V2.0
+ * 
  */
 document.body.addEventListener('animationstart', function(e) {
     // Scope restriction
@@ -22,7 +25,7 @@ document.body.addEventListener('animationstart', function(e) {
      */
     var od = {};
     /**
-     * Discussions events module.
+     * Discussions animation    events module.
      * @class od.events
      */
     od.events = {
@@ -202,10 +205,9 @@ document.body.addEventListener('animationstart', function(e) {
                 var t = new Date().getTime();
                 var cb = Number(localStorage.oasisDiscussionsAge) || +t-21600000;
                 var s = (typeof localStorage.oasisDiscussionsSettings === 'undefined');
-                // Remove existing classes
-                od.oasis.util.rmvClass();
                 // Theme setup
                 if (s || (t >= +cb+21600000)) {
+                    od.oasis.util.rmvClass();
                     od.oasis.data({ 'init': true });
                 } else {
                     od.oasis.util.addClass();
@@ -307,7 +309,7 @@ document.body.addEventListener('animationstart', function(e) {
 });
 /**
  * Application styling
- * @class app
+ * @param {Object} app Stylesheet settings
  */
 (function(app) {
     // Stylesheet attributes
