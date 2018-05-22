@@ -41,7 +41,7 @@
         "no-octal-escape": "error",
         "no-return-assign": "error",
         "object-curly-spacing": [ "error", "always" ],
-        "one-var": ["error", "never"],
+        "one-var": ["error", "consecutive"],
         "quotes": [ "error", "single" ],
         "semi": [ "error", "always" ],
         "semi-spacing": [ "error", { "before": false, "after": true } ],
