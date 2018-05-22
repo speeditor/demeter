@@ -122,11 +122,9 @@ document.body.addEventListener('animationstart', function(e) {
          */
         data: function(d) {
             // Wiki data
-            var t = new Date().getTime();
-            var cb = Number(localStorage.oasisDiscussionsAge) || +t-21600000;
-            var s = (typeof localStorage.oasisDiscussionsSettings === 'undefined');
+            var o = od.oasis.util.storage();
             // Theme setup
-            if (s || (t >= +cb+21600000)) {
+            if (o.s || (o.t >= +o.cb+21600000)) {
                 $.get('/wiki/Special:BlankPage').done(function (w) {
                     od.oasis.call(w, d);
                 });
@@ -202,11 +200,9 @@ document.body.addEventListener('animationstart', function(e) {
              * @method on
              */
             on: function() {
-                var t = new Date().getTime();
-                var cb = Number(localStorage.oasisDiscussionsAge) || +t-21600000;
-                var s = (typeof localStorage.oasisDiscussionsSettings === 'undefined');
+                var o = od.oasis.util.storage();
                 // Theme setup
-                if (s || (t >= +cb+21600000)) {
+                if (o.s || (o.t >= +o.cb+21600000)) {
                     od.oasis.util.rmvClass();
                     od.oasis.data({ 'init': true });
                 } else {
@@ -226,6 +222,18 @@ document.body.addEventListener('animationstart', function(e) {
          * @member {Object} util
          */
         util: {
+            /**
+             * Oasis module storage
+             * @method storage
+             * @returns {Object}
+             */
+            storage: function() {
+                return {
+                    t: new Date().getTime(),
+                    cb: Number(localStorage.oasisDiscussionsAge) || +t-21600000,
+                    s: (typeof localStorage.oasisDiscussionsSettings === 'undefined')
+                }
+            },
             /**
              * Oasis class addition
              * @method addClass
