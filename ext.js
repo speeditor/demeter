@@ -7,7 +7,7 @@
  * @license                 CC-BY-SA 3.0
  * 
  */
-(function(xhr, ext, s, l) {
+(function(xhr, ext, rel) {
     // Script variables.
     var api = 'https://api.github.com/repos/speeditor/demeter/releases/latest';
     /**
@@ -23,25 +23,24 @@
      * @function            ext.import
      * @param               {string} c File extension.
      */
-    ext.import = function(t, c) {
+    ext.import = function(c) {
         var p = 'https://cdn.rawgit.com/speeditor/demeter/' + ext.tag +'/app.' + c;
+        for (var n in ext.opts[c])
+            rel[c].setAttribute(n, ext.opts[c][n]);
         switch (c) {
             case 'css':
-                for (var a1 in ext.opts.css) l.setAttribute(a1, ext.opts.css[a1]);
-                l.disabled = true;
-                l.href = p;
-                document.head.appendChild(l);
+                rel.css.disabled = true;
+                rel.css.href = p;
                 break;
             case 'js':
-                for (var a2 in ext.opts.js) s.setAttribute(a2, ext.opts.js[a2]);
-                s.async = true;
-                s.src = p;
-                s.onload = function() {
-                    l.disabled = false;
+                rel.js.async = true;
+                rel.js.src = p;
+                rel.js.onload = function() {
+                    rel.css.disabled = false;
                 };
-                document.head.appendChild(s);
                 break;
         }
+        document.head.appendChild(rel[c]);
     };
     /**
      * Element attributes for imports.
@@ -63,6 +62,6 @@
     xhr.open('GET', api);
     xhr.send();
 }(new XMLHttpRequest(), {}, {
-    css: document.createElement('script'),
-    js:  document.createElement('link')
+    css: document.createElement('link'),
+    js:  document.createElement('script')
 }));
