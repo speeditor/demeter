@@ -12,11 +12,10 @@
         "mediaWiki": false,
         "mw": false,
         "jquery": false,
-        "greasemonkey": false
+        "demeter": false
     },
     "rules": {
         "comma-dangle": [ "error", "never" ],
-        "curly": ["error", "multi"],
         "dot-location": [ "error", "property" ],
         "dot-notation": [ "error" ],
         "eol-last": [ "error", "never" ],
@@ -26,7 +25,6 @@
         "key-spacing": [ "error", { "beforeColon": false, "afterColon": true } ],
         "keyword-spacing": "error",
         "linebreak-style": [ "error", "windows" ],
-        "new-cap": "error",
         "new-parens": "error",
         "no-alert": "error",
         "no-bitwise": "error",
@@ -45,9 +43,8 @@
         "quotes": [ "error", "single" ],
         "semi": [ "error", "always" ],
         "semi-spacing": [ "error", { "before": false, "after": true } ],
-        "space-before-function-paren": ["error", "always"],
+        "space-before-function-paren": ["error", "never"],
         "space-in-parens": [ "error", "never"],
-        "valid-jsdoc": [ "error", "always" ],
         "wrap-iife": ["error", "outside"]
     }
 }
