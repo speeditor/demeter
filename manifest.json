@@ -16,14 +16,6 @@
         "url": "https://github.com/speeditwikia"
     },
     "contributors": [],
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    "main": "app.js",
->>>>>>> 1c895ea8df120237d651bd1b48384a8893706793
-=======
-    "main": "app.js",
->>>>>>> 1c895ea8df120237d651bd1b48384a8893706793
     "repository": {
         "type": "git",
         "url": "https://github.com/speeditor/demeter.git"
@@ -40,21 +32,9 @@
         "128": "dist/icon-128.png"
     },
     "permissions": [
-<<<<<<< HEAD
-<<<<<<< HEAD
         "*://*.github.com/*",
         "*://*.rawgit.com/*",
         "*://*.wikia.com/*"
-=======
-        "https?:\/\/[^.]+.github.com/*",
-        "https?:\/\/[^.]+.rawgit.com/*",
-        "https?:\/\/[^.]+.wikia.com/*"
->>>>>>> 1c895ea8df120237d651bd1b48384a8893706793
-=======
-        "https?:\/\/[^.]+.github.com/*",
-        "https?:\/\/[^.]+.rawgit.com/*",
-        "https?:\/\/[^.]+.wikia.com/*"
->>>>>>> 1c895ea8df120237d651bd1b48384a8893706793
     ],
     "manifest_version": 2
 }
