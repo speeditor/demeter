@@ -258,29 +258,3 @@ document.body.addEventListener('animationstart', function(e) {
         });
     }());
 });
-// Application styling.
-(function(app) {
-    // Stylesheet attributes.
-    Object.keys(app.m).forEach(function(a) {
-        app.s.setAttribute(a, app.m[a]);
-    });
-    // Stylesheet insertion.
-    document.body.appendChild(app.s);
-}({
-    // Stylesheet element.
-    s: document.createElement('link'),
-    // Stylesheet attributes.
-    m: {
-        'rel': 'stylesheet',
-        'href': (function(o) {
-            return '/load.php?' + Object.keys(o).map(function(k) {
-                return encodeURIComponent(k) + '=' + encodeURIComponent(o[k]);
-            }).join('&');
-        }({
-            mode: 'articles',
-            articles: 'u:speedit:MediaWiki:OasisDiscussions.css',
-            only: 'styles',
-            debug: '1'
-        }))
-    }
-}));
