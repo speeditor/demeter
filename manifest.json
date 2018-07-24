@@ -2,24 +2,8 @@
     "name": "demeter",
     "version": "0.8.0",
     "description": "Oasis design wrapper and userscripting library for FANDOM Discussions.",
-    "categories": [
-        "wikia",
-        "discussions",
-        "oasis",
-        "userscript"
-    ],
-    "homepage": "https://github.com/speeditor/demeter/README.md",
-    "license": "GNU GPL V2.0",
-    "author": {
-        "name": "Speedit",
-        "email": "speeditwikia@gmail.com",
-        "url": "https://github.com/speeditwikia"
-    },
-    "contributors": [],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/speeditor/demeter.git"
-    },
+    "homepage_url": "https://github.com/speeditor/demeter",
+    "author": "Speedit <speeditwikia@gmail.com>",
     "content_scripts": [{
         "js": ["ext.js"],
         "matches": ["*://*.wikia.com/d/*"]
