@@ -14,13 +14,10 @@ Modules:
 * `demeter.config` - Discussions configuration variables
   * `demeter.config.get` - get configuration by dot-delimited path string
   * `demeter.config.set` - set config value by dot-delimited path string
-<<<<<<< HEAD
 * `demeter.hook` - Discussions events framework
-** `demeter.hook('event').add(fn)`
-** `demeter.hook('event').remove(fn)`
-** `demeter.hook('event').fire(i)`
-=======
->>>>>>> 1c895ea8df120237d651bd1b48384a8893706793
+  * `demeter.hook('event').add(fn)`
+  * `demeter.hook('event').remove(fn)`
+  * `demeter.hook('event').fire(i)`
 
 ## TO-DO
 * API wrapper

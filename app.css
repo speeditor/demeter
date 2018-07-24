@@ -21,7 +21,7 @@
     to   { outline-color: transparent; }
 }
 /*** Discussions mobile responsive breakpoint ***/
-.discussions .site-head-container {
+.discussions .wds-community-bar {
     animation: discussions__mobi 1ms 1 ease;
 }
 @keyframes discussions__mobi {
@@ -29,7 +29,7 @@
     to   { outline-color: transparent; }
 }
 /*** Discussions desktop responsive breakpoint ***/
-.discussions .wds-global-navigation-wrapper {
+.discussions .wds-community-header {
     animation: discussions__wide 1ms 1 ease;
 }
 @keyframes discussions__wide {
