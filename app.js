@@ -1,4 +1,3 @@
-// Application scripting
 document.body.addEventListener('animationstart', function(e) {
     // Scope restriction
     if (e.animationName !== 'discussions__init') {
