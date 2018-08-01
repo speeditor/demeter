@@ -3,7 +3,7 @@
  * @module                  Demeter
  * @description             Oasis design wrapper and userscripting library for FANDOM Discussions.
  * @author                  Speedit
- * @version                 0.8.0
+ * @version                 0.8.3
  * @license                 CC-BY-SA 3.0
  * 
  */

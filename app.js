@@ -6,16 +6,66 @@ document.body.addEventListener('animationstart', function(e) {
     window.demeter = {};
     // Discussions events module.
     demeter.events = {
+        init: function() {
+            // Initial hook.
+            $(document.body).trigger('demeter.init');
+            // Event dispatcher.
+            $(document.body).on(demeter.events.t, demeter.events.handler);
+            // Initial events.
+            $(document.body).trigger({
+                type: demeter.events.t,
+                originalEvent: {
+                    animationName: 'discussions__init'
+                }
+            }).find('.discussion-content-wrapper').trigger({
+                type: demeter.events.t,
+                originalEvent: {
+                    animationName: 'discussions__content'
+                }
+            });
+        },
+        // Discussions animation-driven event logic.
         t: 'animationstart',
         handler: function(e) {
             var a = e.originalEvent.animationName.split('__');
             if (
                 a[0] !== 'discussions' ||
-                !window.oasisDiscussionsInitialized
+                !window.demeter.isInitialized
             ) {
                 return;
             }
-            demeter.hook('discussions.' + a[1]).fire({ 'init': true });
+            var d = demeter.events.data();
+            demeter.hook('discussions.' + a[1]).fire(d);
+        },
+        // Discussions event data extractor.
+        data: function() {
+            var $t = $([
+                '.post-title',
+                '.discussion-left-rail__header'
+            ].join(', ')).eq(0);
+            return {
+                view: $('.discussion-error').exists() ?
+                    'error' :
+                    (function(p) {
+                        switch (p) {
+                            case ('f'):
+                                return 'post-list';
+                            case ('p'):
+                                return 'post-details';
+                            case ('u'):
+                                return 'user-list';
+                            case ('m'):
+                                return 'user-activity';
+                            case ('g'):
+                                return 'guidelines';
+                            case ('reported'):
+                                return 'report-dialog';
+                        }
+                    }(window.location.pathname.split('/')[2])),
+                title: $t.exists() ?
+                    $t.text() :
+                    demeter.i18n.msg('title')
+            };
         }
     };
     // Userscripting hook module.
@@ -24,20 +74,11 @@ document.body.addEventListener('animationstart', function(e) {
         return function(name) {
             var list = lists[name] || (lists[name] = $.Callbacks('memory'));
             return {
-                /**
-                 * @function    demeter.hook.add
-                 * @param       {function} fn Handler.
-                 */
+                // Callback addition.
                 add: list.add,
-                /**
-                 * @function    demeter.hook.remove
-                 * @param       {function} fn Handler.
-                 */
+                // Callback removal.
                 remove: list.remove,
-                /**
-                 * @function    demeter.hook.fire
-                 * @param       {*} arg Argument.
-                 */
+                // Callback invocation.
                 fire: function() {
                     return list.fireWith(null, [].slice.call(arguments));
                 }
@@ -166,12 +207,10 @@ document.body.addEventListener('animationstart', function(e) {
         },
         // Oasis renderer.
         render: function() {
-            // Script activation.
-            demeter.hook('discussions.init').add(demeter.oasis.handler.on);
             // Event delegation.
-            demeter.hook('discussions.navi').add(demeter.oasis.handler.on);
-            demeter.hook('discussions.mobi').add(demeter.oasis.handler.off);
-            demeter.hook('discussions.wide').add(demeter.oasis.handler.on);
+            demeter.hook('discussions.content').add(demeter.oasis.handler.on);
+            demeter.hook('discussions.mobile').add(demeter.oasis.handler.off);
+            demeter.hook('discussions.desktop').add(demeter.oasis.handler.on);
             demeter.hook('discussions.init').add(demeter.oasis.handler.on);
         },
         // Oasis event handlers.
@@ -246,11 +285,7 @@ document.body.addEventListener('animationstart', function(e) {
      */
     demeter.init = (function() {
         // Global status variable
-        window.oasisDiscussionsInitialized = true;
-        // Initial hook
-        $(document.body).trigger('discussions.init');
-        // Event dispatcher
-        $(document.body).on(demeter.events.t, demeter.events.handler);
+        demeter.isInitialized = true;
         // Module initializers
         demeter.modules.forEach(function(m) {
             demeter[m].init({ 'init': false });

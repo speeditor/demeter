@@ -14,25 +14,25 @@
 }
 /*** Discussions navigation event ***/
 .discussions .discussion-content-wrapper {
-    animation: discussions__navi 1ms 1 ease;
+    animation: discussions__content 1ms 1 ease;
 }
-@keyframes discussions__navi {
+@keyframes discussions__content {
     from { outline-color: currentColor; }
     to   { outline-color: transparent; }
 }
 /*** Discussions mobile responsive breakpoint ***/
 .discussions .wds-community-bar {
-    animation: discussions__mobi 1ms 1 ease;
+    animation: discussions__mobile 1ms 1 ease;
 }
-@keyframes discussions__mobi {
+@keyframes discussions__mobile {
     from { outline-color: currentColor; }
     to   { outline-color: transparent; }
 }
 /*** Discussions desktop responsive breakpoint ***/
 .discussions .wds-community-header {
-    animation: discussions__wide 1ms 1 ease;
+    animation: discussions__desktop 1ms 1 ease;
 }
-@keyframes discussions__wide {
+@keyframes discussions__desktop {
     from { outline-color: currentColor; }
     to   { outline-color: transparent; }
 }
