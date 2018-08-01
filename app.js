@@ -44,7 +44,7 @@ document.body.addEventListener('animationstart', function(e) {
                 '.discussion-left-rail__header'
             ].join(', ')).eq(0);
             return {
-                view: !!$('.discussion-error').length ?
+                view: $('.discussion-error').length > 0 ?
                     'error' :
                     (function(p) {
                         switch (p) {
@@ -62,9 +62,9 @@ document.body.addEventListener('animationstart', function(e) {
                                 return 'report-dialog';
                         }
                     }(window.location.pathname.split('/')[2])),
-                title: !!$t.length ?
+                title: $t.length > 0 ?
                     $t.text() :
-                    demeter.i18n.msg('title')
+                    demeter.i18n.msg
             };
         }
     };
@@ -121,6 +121,22 @@ document.body.addEventListener('animationstart', function(e) {
         },
         // Configuration cache.
         _values: {}
+    };
+    // I18n module.
+    demeter.i18n = {
+        api: '/api.php',
+        query: {
+            action: 'query',
+            meta: 'allmessages',
+            ammessages: 'discussions',
+            format: 'json'
+        },
+        handler: function(d) {
+            demeter.i18n.msg =
+                d.query.allmessages[0]['*'];
+            demeter.i18n.$loaded.resolve();
+        },
+        $loaded: $.Deffered()
     };
     // Oasis module.
     demeter.oasis = {
@@ -269,26 +285,28 @@ document.body.addEventListener('animationstart', function(e) {
         // Settings cache.
         themeSettings: {}
     };
-    /**
-     * Module registry
-     * @member {Array} od.modules
-     */
+    // Module registry.
     demeter.modules = Object.keys(demeter).filter(function(m) {
         return (
             typeof demeter[m] === 'object' &&        // module check
             typeof demeter[m].init === 'function'    // init fn check
         );
     });
-    /**
-     * Script initializer
-     * @method od.init
-     */
+    // Script initializer.
     demeter.init = (function() {
-        // Global status variable
+        // Global status variable.
         demeter.isInitialized = true;
-        // Module initializers
-        demeter.modules.forEach(function(m) {
-            demeter[m].init({ 'init': false });
+        // I18n initialiser.
+        $.getJSON(
+            demeter.i18n.api,
+            demeter.i18n.query,
+            demeter.i18n.handler
+        );
+        // Module initializers.
+        $.when(demeter.i18n.$loaded).then(function() {
+            demeter.modules.forEach(function(m) {
+                demeter[m].init({ 'init': false });
+            });    
         });
     }());
 });
