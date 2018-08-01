@@ -64,7 +64,7 @@ document.body.addEventListener('animationstart', function(e) {
                     }(window.location.pathname.split('/')[2])),
                 title: $t.length > 0 ?
                     $t.text() :
-                    demeter.i18n.msg
+                    demeter.config.get('translations.discussion.main.discussions-header-title')
             };
         }
     };
@@ -121,22 +121,6 @@ document.body.addEventListener('animationstart', function(e) {
         },
         // Configuration cache.
         _values: {}
-    };
-    // I18n module.
-    demeter.i18n = {
-        api: '/api.php',
-        query: {
-            action: 'query',
-            meta: 'allmessages',
-            ammessages: 'discussions',
-            format: 'json'
-        },
-        handler: function(d) {
-            demeter.i18n.msg =
-                d.query.allmessages[0]['*'];
-            demeter.i18n.$loaded.resolve();
-        },
-        $loaded: $.Deferred()
     };
     // Oasis module.
     demeter.oasis = {
@@ -296,17 +280,9 @@ document.body.addEventListener('animationstart', function(e) {
     demeter.init = (function() {
         // Global status variable.
         demeter.isInitialized = true;
-        // I18n initialiser.
-        $.getJSON(
-            demeter.i18n.api,
-            demeter.i18n.query,
-            demeter.i18n.handler
-        );
         // Module initializers.
-        $.when(demeter.i18n.$loaded).then(function() {
-            demeter.modules.forEach(function(m) {
-                demeter[m].init({ 'init': false });
-            });    
+        demeter.modules.forEach(function(m) {
+            demeter[m].init({ 'init': false });
         });
     }());
 });
