@@ -1,6 +1,6 @@
 {
     "name": "demeter",
-    "version": "0.8.5",
+    "version": "0.8.6",
     "description": "Oasis design wrapper and userscripting library for FANDOM Discussions.",
     "homepage_url": "https://github.com/speeditor/demeter",
     "author": "Speedit <speeditwikia@gmail.com>",

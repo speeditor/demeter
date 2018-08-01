@@ -136,7 +136,7 @@ document.body.addEventListener('animationstart', function(e) {
                 d.query.allmessages[0]['*'];
             demeter.i18n.$loaded.resolve();
         },
-        $loaded: $.Deffered()
+        $loaded: $.Deferred()
     };
     // Oasis module.
     demeter.oasis = {
