@@ -44,7 +44,7 @@ document.body.addEventListener('animationstart', function(e) {
                 '.discussion-left-rail__header'
             ].join(', ')).eq(0);
             return {
-                view: $('.discussion-error').exists() ?
+                view: !!$('.discussion-error').length ?
                     'error' :
                     (function(p) {
                         switch (p) {
@@ -62,7 +62,7 @@ document.body.addEventListener('animationstart', function(e) {
                                 return 'report-dialog';
                         }
                     }(window.location.pathname.split('/')[2])),
-                title: $t.exists() ?
+                title: !!$t.length ?
                     $t.text() :
                     demeter.i18n.msg('title')
             };
