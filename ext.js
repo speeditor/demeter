@@ -1,9 +1,8 @@
 /* <nowiki>
  * 
- * @module                  Demeter
- * @description             Oasis design wrapper and userscripting library for FANDOM Discussions.
+ * @module                  demeter/ext.js
+ * @description             Oasis design wrapper and userscripting extension for FANDOM Discussions.
  * @author                  Speedit
- * @version                 0.8.7
  * @license                 CC-BY-SA 3.0
  * 
  */

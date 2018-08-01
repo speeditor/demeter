@@ -1,3 +1,12 @@
+/* <nowiki>
+ * 
+ * @module                  demeter/app.js
+ * @description             Oasis design wrapper and userscripting library for FANDOM Discussions.
+ * @author                  Speedit
+ * @version                 0.8.8
+ * @license                 CC-BY-SA 3.0
+ * 
+ */
 document.body.addEventListener('animationstart', function(e) {
     // Scope restriction
     if (e.animationName !== 'discussions__init') {
@@ -40,11 +49,11 @@ document.body.addEventListener('animationstart', function(e) {
         // Discussions event data extractor.
         data: function() {
             var $t = $([
-                '.post-title',
+                '.post .post-title',
                 '.discussion-left-rail__header'
             ].join(', ')).eq(0);
             return {
-                view: $('.discussion-error').length > 0 ?
+                view: $('.discussion-wrapper > .discussion-error').length > 0 ?
                     'error' :
                     (function(p) {
                         switch (p) {

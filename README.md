@@ -21,4 +21,5 @@ Userscripting modules:
 ## TO-DO
 * Oasis page header
 * Rail activity module
+* Publish to Chrome Web Store
 * API wrapper
